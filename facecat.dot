@@ -1,0 +1,22 @@
+digraph facecat {
+    _GetProfile;
+    _CreateWall;
+    _DeleteWall;
+    _GetWall;
+    _CreateHeader;
+    __init__;
+    __del__;
+    open;
+    close;
+    read;
+    write;
+
+    _CreateWall -> _GetWall;
+    _GetWall -> _CreateWall;
+    __init__ -> open;
+    __del__ -> close;
+    open -> {_CreateHeader; _GetProfile; _GetWall};
+    close -> _DeleteWall;
+    write -> write;
+}
+
