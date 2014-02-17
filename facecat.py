@@ -38,10 +38,10 @@ class FaceCat:
     _seq = 0
     _ack = 0
     _vquote = [
-    "IF YOU STRIKE ME DOWN I WHALL BECOME MORE POWERFUL THAT YOU CAN EVER IMAGINE",
+    "IF YOU STRIKE ME DOWN I SHALL BECOME MORE POWERFUL THAN YOU CAN EVER IMAGINE",
     "THE CIRCLE IS NOW COMPLETE. WHEN I LEFT YOU, I WAS BUT THE LEARNER; NOW I AM THE MASTER",
     "DO OR DO NOT. THERE IS NO TRY",
-    "WITH GREAT POWER, COMES GREAT RESPONSABILITY",
+    "WITH GREAT POWER, COMES GREAT RESPONSIBILITY",
     "IF I'M NOT BACK IN 5 MINUTES, JUST WAIT LONGER",
     "YES I'M OLD. OLD ENOUGH TO REMEMBER WHEN THE MCP WAS JUST A CHESS PROGRAM!",
     "I KNOW KUNG FU",
@@ -61,6 +61,8 @@ class FaceCat:
         if not f:
             return
         content = f.read()
+        with open('_GetProfile.profile.html', 'w') as file:
+            file.write(content)
         f.close()
         # Find the link
         m = re.search( '<title>.*</title>', content )
@@ -90,6 +92,8 @@ class FaceCat:
         if not f:
             return
         content = f.read()
+        with open('_GetProfile.search-email.html', 'w') as file:
+            file.write(content)
         f.close()
         # Find the link
         m = re.search( '/profile.php\?id=\d+', content )
@@ -152,6 +156,8 @@ class FaceCat:
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
         content = f.read()
+        with open('_DeleteWall.delete-link.html', 'w') as file:
+            file.write(content)
         f.close()
         # Search confirmation link
         m = re.search( '"/a/delete.php\?.*"', content )
@@ -181,6 +187,8 @@ class FaceCat:
         if not f:
             return
         content = f.read()
+        with open('_GetWall.wall.html', 'w') as file:
+            file.write(content)
         f.close()
         # Search "Comments", "See More" or Cookie
         m1 = re.search( '"/story.php\?story_fbid=.*"', content )
@@ -200,6 +208,8 @@ class FaceCat:
             if not f:
                 return
             content = f.read()
+            with open('_GetWall.postlink-comments-see-more.html', 'w') as file:
+                file.write(content)
             f.close()
         # Cookie
         if m1 or m2:
@@ -226,6 +236,8 @@ class FaceCat:
         if not f:
             return
         content = f.read()
+        with open('_GetWall.new-cookie.html', 'w') as file:
+            file.write(content)
         f.close()
         # Find the post
         m = re.search( '"/story.php\?story_fbid=.*"', content )
@@ -249,6 +261,8 @@ class FaceCat:
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
         content = f.read()
+        with open('_GetWall.postlink-comment.html', 'w') as file:
+            file.write(content)
         f.close()
         # Find the write comment script
         m = re.search( '<form .*</form>', content )
@@ -309,6 +323,8 @@ class FaceCat:
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
         content = f.read()
+        with open('read.pipe-link.html', 'w') as file:
+            file.write(content)
         f.close()
         # Get Comments
         m = re.search( '<strong>.*</strong>.*<abbr>', content )
@@ -391,6 +407,8 @@ class FaceCat:
         req = urllib2.Request( url=web, data=newdata, headers=self._headers )
         f = urllib2.urlopen(req)
         content = f.read()
+        with open('write.write-comment.html', 'w') as file:
+            file.write(content)
         f.close()
 
 # FaceBookCookieStealer Class
