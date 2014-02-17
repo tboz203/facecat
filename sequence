@@ -1,0 +1,6 @@
+#!/bin/bash
+for i in {0..359..30}; do
+    convert -size 200x200 -seed 8080 xc: +noise Random -channel G  -function Sinusoid 1,${i} \
+            -virtual-pixel tile -blur 0x8 -auto-level \
+            -separate flux_${i}.png
+done
