@@ -10,7 +10,7 @@ actually qualify as `printable`, but whatever).'''
 if __name__ == '__main__':
     img = hide.generate_image()
 
-    img = hide.store(message, img)
+    img = hide.store(img, message)
 
     with open('test.out.jpg', 'w') as file:
         file.write(img)

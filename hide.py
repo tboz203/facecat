@@ -9,6 +9,8 @@ from __future__ import print_function
 import subprocess
 import struct
 
+sentinel = bytearray('\x00\xff\x00\x00\xff\x00')
+
 def generate_image():
     '''Use the ImageMagick command `convert` to generate a randomized image.'''
     conv_args = ['convert', '-size', '960x960', 'plasma:fractal', 'jpeg:-']
@@ -73,7 +75,7 @@ def _getcontainer(container, offset):
             n |= c & 1
         yield n
 
-def store(container, hidden, offset=1024):
+def store(container, hidden, offset=1022, skip=64):
     '''Insert a hidden bytearray into a container bytearray. Does some length
     checking.'''
 
@@ -82,6 +84,8 @@ def store(container, hidden, offset=1024):
     # with open(hidden_f) as file:
     #     hidden = bytearray(file.read())
 
+    container = bytearray(container)
+
     # is this all we need to do? do we need to check for sentinel w/in string
     # and escape it?
     hidden += sentinel
@@ -89,10 +93,9 @@ def store(container, hidden, offset=1024):
     # using some binary logic, set the least significant bit in each byte to a
     # byte from our hidden
     for i, x in enumerate(_getbits(hidden)):
-        container[offset + i] = container[offset + i] & ~1 | x
+        container[offset + i*(skip+1)] = container[offset + i*(skip+1)] & ~1 | x
 
-    # with open(container_f, 'w') as file:
-    #     file.write(container)
+    return container
 
 def retrieve(container, hidden, offset=1024):
     '''Retrieve a hidden bytearray from a container bytearray.'''

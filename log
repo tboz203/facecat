@@ -1,0 +1,13 @@
+[+] Entering Main
+<type 'instance'>.get_cookie
+<type 'instance'>.get_chrome_linux_cookie
+<type 'instance'>.get_firefox_linux_cookie
+<type 'instance'>.get_firefox_cookie
+LINUX Detected...
+Firefox FaceBook Cookies!
+<type 'instance'>.__init__
+[Errno 98] Address already in use
+Closing FaceCat Script
+<type 'instance'>.__del__
+<type 'instance'>.close
+<type 'instance'>._DeleteWall
