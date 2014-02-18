@@ -59,6 +59,8 @@ class FaceCat:
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
         if not f:
+            if options.verbose:
+                print('    [-] no page returned: returning')
             return
         content = f.read()
         with open('_GetProfile.profile.html', 'w') as file:
@@ -67,6 +69,8 @@ class FaceCat:
         # Find the link
         m = re.search( '<title>.*</title>', content )
         if not m:
+            if options.verbose:
+                print('    [-] no title found: returning')
             return
         link = m.group(0)
         # Split content
@@ -75,6 +79,8 @@ class FaceCat:
         # Find share link
         m = re.search( 'composer_form\" action.*</form>', content )
         if not m:
+            if options.verbose:
+                print('    [-] no share link found: returning')
             return
         form = m.group(0)
         # Split content
@@ -90,6 +96,8 @@ class FaceCat:
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
         if not f:
+            if options.verbose:
+                print('    [-] no search query reply page: returning')
             return
         content = f.read()
         with open('_GetProfile.search-email.html', 'w') as file:
@@ -98,6 +106,8 @@ class FaceCat:
         # Find the link
         m = re.search( '/profile.php\?id=\d+', content )
         if m:
+            if options.verbose:
+                print('    [+] found link')
             link = m.group(0)
             # Split the FaceBook ID
             vfbid = re.split( '=', link )
@@ -111,6 +121,9 @@ class FaceCat:
             self._fbid = vfbid[1]
             self._fbname = name
         else:
+            if options.verbose:
+                print('    [+] did not find link')
+                print('    [+] setting fbid == 0')
             self._fbid = 0
             self._fbname = self._myname
         return
@@ -121,6 +134,8 @@ class FaceCat:
             print(str(type(self))+'._CreateWall')
         # We need to be the owner
         if self._fbid != 0:
+            if options.verbose:
+                print('    [+] we\'re not owner (fbid != 0): returning')
             return
         # Create Post so I'm the master
         self._sender = "M"
@@ -149,6 +164,8 @@ class FaceCat:
         import re
         # We need to be the owner
         if self._fbid != 0:
+            if options.verbose:
+                print('    [+] we\'re not owner (fbid != 0): returning')
             return
         # Get Post
         web = self._delete_link
@@ -162,6 +179,8 @@ class FaceCat:
         # Search confirmation link
         m = re.search( '"/a/delete.php\?.*"', content )
         if not m:
+            if options.verbose:
+                print('    [-] confirmation not found: returning')
             return
         delete = m.group(0)
         # Split the Delete Link
@@ -170,6 +189,8 @@ class FaceCat:
         # Confirm delete
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
+        if options.verbose:
+            print('    [+] delete confirmed: returning')
         f.close()
         return
 
@@ -179,12 +200,18 @@ class FaceCat:
             print(str(type(self))+'._GetWall')
         # Get the Wall Posts
         if self._fbid != 0:
+            if options.verbose:
+                print('    [+] we\'re not master, so use the fbid')
             web = "http://m.facebook.com/wall.php?id="+self._fbid
         else:
+            if options.verbose:
+                print('    [+] we\'re master, so just use `wall.php`')
             web = "http://m.facebook.com/wall.php"
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
         if not f:
+            if options.verbose:
+                print('    [-] page not found: returning')
             return
         content = f.read()
         with open('_GetWall.wall.html', 'w') as file:
@@ -196,16 +223,22 @@ class FaceCat:
         # None of them? No post
         if not m1 and not m2:
             # No post? Create One
+            if options.verbose:
+                print('    [-] post not found: creating one')
             return self._CreateWall()
         # "Comments" or "See More"
         if m1:
             # Get new URL
+            if options.verbose:
+                print('    [+] "Comments" or "See More"')
             post = m1.group(0)
             postlink = re.split( '"', post )[1].replace("&amp;","&")
             auxweb = "http://m.facebook.com" + postlink
             req = urllib2.Request( url=auxweb, headers=self._headers )
             f = urllib2.urlopen(req)
             if not f:
+                if options.verbose:
+                    print('    [+] no reply: returning')
                 return
             content = f.read()
             with open('_GetWall.postlink-comments-see-more.html', 'w') as file:
@@ -214,14 +247,20 @@ class FaceCat:
         # Cookie
         if m1 or m2:
             # Remove HTML Tags
+            if options.verbose:
+                print('    [+] Cookie')
             content = re.sub( '<[a-zA-Z \"\'=/_?]+>', '', content )
             content = re.sub( ' ', '', content )
             # Get the cookie
             m = re.search( '-\[[a-zA-Z0-9+/=]+\]', content )
             if not m:
                 # No? Sure? Error!
+                if options.verbose:
+                    print('    [+] ... no cookie found? returning')
                 return
             # Decode Cookie
+            if options.verbose:
+                print('    [+] Cookie found')
             aux = re.split( '\[', m.group(0) )[1]
             cookie64 = re.split( '\]', aux )[0]
             cookie = base64.b64decode( cookie64 )
@@ -234,6 +273,8 @@ class FaceCat:
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
         if not f:
+            if options.verbose:
+                print('    [-] page not found on reload: returning')
             return
         content = f.read()
         with open('_GetWall.new-cookie.html', 'w') as file:
@@ -243,6 +284,8 @@ class FaceCat:
         m = re.search( '"/story.php\?story_fbid=.*"', content )
         if not m:
             # No? Sure? Error!
+            if options.verbose:
+                print('    [-] post not found: returning')
             return
         post = m.group(0)
         # Split the Post Link
@@ -251,6 +294,8 @@ class FaceCat:
         # Find the Delete link
         m = re.search( '"/delete.php\?.*"', content )
         if not m:
+            if options.verbose:
+                print('    [-] delete link not found: returning')
             return
         delete = m.group(0)
         # Split the Delete Link
@@ -273,6 +318,8 @@ class FaceCat:
         form_fb_dtsg = vform[11]
         form_post_form_id = vform[19]
         # Store & Return
+        if options.verbose:
+            print('    [+] setting values and returning')
         self._pipe_link = "http://m.facebook.com" + postlink
         self._pipe_wlink = "http://m.facebook.com" + form_action
         self._pipe_wdata = "id="+form_id+"&fb_dtsg="+form_fb_dtsg+"&post_form_id="+form_post_form_id+"&comment_text="
