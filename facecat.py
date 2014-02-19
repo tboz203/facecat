@@ -38,16 +38,16 @@ class FaceCat:
     _seq = 0
     _ack = 0
     _vquote = [
-    "IF YOU STRIKE ME DOWN I SHALL BECOME MORE POWERFUL THAN YOU CAN EVER IMAGINE",
-    "THE CIRCLE IS NOW COMPLETE. WHEN I LEFT YOU, I WAS BUT THE LEARNER; NOW I AM THE MASTER",
-    "DO OR DO NOT. THERE IS NO TRY",
-    "WITH GREAT POWER, COMES GREAT RESPONSIBILITY",
-    "IF I'M NOT BACK IN 5 MINUTES, JUST WAIT LONGER",
-    "YES I'M OLD. OLD ENOUGH TO REMEMBER WHEN THE MCP WAS JUST A CHESS PROGRAM!",
-    "I KNOW KUNG FU",
-    "FREE YOUR MIND",
-    "FOLLOW THE WHITE RABBIT",
-    "STOP TRYING TO HIT ME AND HIT ME!"
+        "IF YOU STRIKE ME DOWN I SHALL BECOME MORE POWERFUL THAN YOU CAN EVER IMAGINE",
+        "THE CIRCLE IS NOW COMPLETE. WHEN I LEFT YOU, I WAS BUT THE LEARNER; NOW I AM THE MASTER",
+        "DO OR DO NOT. THERE IS NO TRY",
+        "WITH GREAT POWER, COMES GREAT RESPONSIBILITY",
+        "IF I'M NOT BACK IN 5 MINUTES, JUST WAIT LONGER",
+        "YES I'M OLD. OLD ENOUGH TO REMEMBER WHEN THE MCP WAS JUST A CHESS PROGRAM!",
+        "I KNOW KUNG FU",
+        "FREE YOUR MIND",
+        "FOLLOW THE WHITE RABBIT",
+        "STOP TRYING TO HIT ME AND HIT ME!"
     ]
 
     # Search Pipe Profile
@@ -167,6 +167,8 @@ class FaceCat:
             if options.verbose:
                 print('    [+] we\'re not owner (fbid != 0): returning')
             return
+        if options.verbose:
+            print('    [+] we\'re the owner (fbid == 0)')
         # Get Post
         web = self._delete_link
         # Press delete button
