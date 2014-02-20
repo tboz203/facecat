@@ -1,11 +1,11 @@
 digraph facecat {
-    _GetProfile;
-    _CreateWall;
-    _DeleteWall;
-    _GetWall;
-    _CreateHeader;
-    __init__;
-    __del__;
+    _GetProfile [style=filled,color="#AAAAFF"];
+    _CreateWall [style=filled,color="#AAAAFF"];
+    _DeleteWall [style=filled,color="#AAAAFF"];
+    _GetWall [style=filled,color="#AAAAFF"];
+    _CreateHeader [style=filled,color="#AAAAFF"];
+    __init__ [style=filled,color=red];
+    __del__ [style=filled,color=red];
     open;
     close;
     read;

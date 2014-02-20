@@ -137,6 +137,8 @@ class FaceCat:
             if options.verbose:
                 print('    [+] we\'re not owner (fbid != 0): returning')
             return
+        if options.verbose:
+            print('    [+] Writing cookie to wall...')
         # Create Post so I'm the master
         self._sender = "M"
         # Select Quote
@@ -151,26 +153,35 @@ class FaceCat:
             print("Creating new pipe")
         req = urllib2.Request( url=web, data=data, headers=self._headers )
         f = urllib2.urlopen(req)
+        content = f.read();
+        with open('_CreateWall.created-new-pipe.html', 'w') as file:
+            file.write(content)
         f.close()
         # Get Wall
         return self._GetWall()
 
     # Delete Wall
     def _DeleteWall( self ):
-        if options.verbose:
-            print(str(type(self))+'._DeleteWall')
+        # options = object()
+        # options.verbose = True
+        # if options.verbose:
+        print(str(type(self))+'._DeleteWall')
         # Imports
         import urllib2
         import re
         # We need to be the owner
         if self._fbid != 0:
-            if options.verbose:
-                print('    [+] we\'re not owner (fbid != 0): returning')
+            # if options.verbose:
+            print('    [+] we\'re not owner (fbid != 0): returning')
             return
-        if options.verbose:
-            print('    [+] we\'re the owner (fbid == 0)')
+        # if options.verbose:
+        print('    [+] we\'re the owner (fbid == 0)')
         # Get Post
         web = self._delete_link
+        if web == "":
+            # if options.verbose:
+            print('    [-] no delete link: returning')
+            return
         # Press delete button
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
@@ -181,8 +192,8 @@ class FaceCat:
         # Search confirmation link
         m = re.search( '"/a/delete.php\?.*"', content )
         if not m:
-            if options.verbose:
-                print('    [-] confirmation not found: returning')
+            # if options.verbose:
+            print('    [-] confirmation not found: returning')
             return
         delete = m.group(0)
         # Split the Delete Link
@@ -191,8 +202,8 @@ class FaceCat:
         # Confirm delete
         req = urllib2.Request( url=web, headers=self._headers )
         f = urllib2.urlopen(req)
-        if options.verbose:
-            print('    [+] delete confirmed: returning')
+        # if options.verbose:
+        print('    [+] delete confirmed: returning')
         f.close()
         return
 
@@ -343,8 +354,8 @@ class FaceCat:
 
     # Destructor
     def __del__( self ):
-        if options.verbose:
-            print(str(type(self))+'.__del__')
+        # if options.verbose:
+        #     print(str(type(self))+'.__del__')
         self.close()
 
     # Open New Connection
@@ -359,8 +370,8 @@ class FaceCat:
 
     # Close Connection
     def close( self ):
-        if options.verbose:
-            print(str(type(self))+'.close')
+        # if options.verbose:
+        #     print(str(type(self))+'.close')
         self._DeleteWall()
 
     # Read Pipe-Wall
@@ -825,9 +836,16 @@ except KeyboardInterrupt:
     if options.verbose:
         print('[-] Caught KeyboardInterrupt')
         print("Closing FaceCat Script")
-    exit()
+    try:
+        fc.close()
+    except:
+        pass
 
 except Exception as e:
     if options.verbose:
         print(e)
         print("Closing FaceCat Script")
+    try:
+        fc.close()
+    except:
+        pass

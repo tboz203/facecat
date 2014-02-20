@@ -1,6 +1,63 @@
-so it still looks like it's not master, and it can't write to the wall, because
-it thinks it doesn't have the cookie for it. hmm... i guess i'm gonna try w/
-val's?
+"Get my name":
+    get profile.php
+    regex for '<title>.*</title>'
+    pull out name
+    > it seems this person doesn't have the strongest grasp on python regexes
+    > line 81
+"Find share link"
+    regex for 'composer_form\" action.*</form>'
+    grab form_{action,fb_dtsg,post_form_id}
+    > pretty sure at least one of these is incorrect
+    > lines 88-90
 
-even if we get it working, we still don't have a way to extend it yet. fuck
-everything
+    puts together query with self._email
+    regex for '/profile.php\?id=\d+'
+    doesn't find it...
+    > semi-suspect it's looking for 'Tommy.Bozeman'...
+    > but maybe this part works as intended, b/c we set name correctly.
+    sets fbid to 0
+
+"GetWall"
+    gets wall.php
+    "Comments" or "See More" (?)
+    regex for '"/story.php\?story_fbid.*"'
+    > we've inserted a ? on that .* before, bc that's a hellofa match
+    regex for '</strong></a>.*[a-zA-Z0-9+/=]'
+    > wtf is this looking for?
+    first regex matches, second one doesn't
+    grabs two links out (it looks like)
+    > lines 236-238
+    "Cookie" (if m1 or m2, we have m1)
+    does two substitutions, removing tags and whitespace
+    regex for '-\[[a-zA-Z0-9+/=]+\]' (-[*base64*], methinks)
+    no match found (because we haven't put a cookie on the wall...)
+    and then it returns...
+
+so we're back at the module level...
+and it starts doing stuff with raw sockets??
+reads data off the socket, writes it to facebook. why.
+is this an internal piece in a different connection?
+it looks like it pulls data from another connection, and sends *that* to
+facebook. so by itself, this program doesn't do anything. it needs to pull in
+data from **another** connection, and bounces that to facebook.
+
+it looks for the first post on the given wall, and tries to use it as a cookie.
+**only if it doesn't find a post will it try to create a new one** It also
+seems to have some issues w/ posting to the wall. i may have to break apart the
+webpage to get it to work...
+
+---
+
+#### two issues:
+- the data isn't getting extracted from the form correctly. i don't
+  know what needs to be there, but i know it isn't that. i tried to go and
+  capture some raw traffic to see what happens when i share a status, but
+  facebook forces https and i don't have the time to try and decrypt all that. so
+  methinks i'm just going to trial-and-error it... fuck
+
+- the search for host page won't work correctly. it looks for
+  'profile.php?id=XXX', but that's not always how it works. if you're host, it
+  works fine. I don't know if we can make it work without, but i'm going to
+  try.
+
+
